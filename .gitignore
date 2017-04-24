@@ -1,0 +1,14 @@
+# CMake
+**/Debug
+**/Release
+**/RelWithDebInfo
+**/MinSizeRel
+**/build
+
+**/CMakeCache.txt
+**/CMakeFiles
+**/cmake_install.txt
+
+# Vim
+**/tags
+**/.vimrc
