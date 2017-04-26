@@ -26,17 +26,17 @@ addons:
     - libgtest-dev
     - cmake
     - gcovr
+    - jq
 
 before_install:
   # Install latest codacy-coverage-reporter using jq
-  - sudo apt-get install jq
   - wget -O ~/codacy-coverage-reporter-assembly-latest.jar $(curl https://api.github.com/repos/codacy/codacy-coverage-reporter/releases/latest | jq -r .assets[0].browser_download_url)
 
 before_script:
   # Build agent information
   - uname -a
   - gcc -v && g++ -v && cmake --version
-  - gcov --version
+  - gcovr --version
 
 script:
   - mkdir build
