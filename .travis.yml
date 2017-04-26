@@ -5,7 +5,9 @@ compiler:
   - gcc
 os: linux
 # Enable containerization support
-sudo: false
+# NOPE, we need sudo because ubuntu package maintainers won't provide
+#   prebuild libgtest.so
+#sudo: false
 
 env:
   global:
@@ -35,10 +37,10 @@ before_script:
   # Additional build agent information
   - cmake --version
   - gcovr --version
-  # Check google-test installation
-  - ls /usr/include/gtest
-  - ls /usr/share/doc/libgtest-dev/
-  - ls /usr/src/gtest/
+  # Build google test and install it
+  - cd /usr/src/gtest && sudo cmake . && sudo make && sudo mv libg* /usr/lib/
+  - sudo ldconfig -v | grep gtest
+
 
 script:
   - mkdir build
