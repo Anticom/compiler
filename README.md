@@ -8,10 +8,10 @@ Compiler framework alongside `go` compiler implementation.
 The lexer and parser toolkit itself is located inside `tpl` subdirectory.
 
 ## Build instructions
-After cloning this repository, run:
+To build the `go` compiler, after cloning this repository, run:
 ```sh
-$ cd gocompiler
-$ mkdir Release
+$ mkdir build
+$ cd build
 $ export CXX=/usr/bin/clang++ # <- optional
 $ cmake -DCMAKE_BUILD_TYPE=Release ..
 $ make
