@@ -64,12 +64,12 @@ set_target_properties(${TARGET_NAME}
 
 # TESTS
 set(CXX_TEST_SOURCES
-    test/testAstPrinter.cxx
-    test/main.cxx)
+    test/testAstPrinter.cxx)
 
 set(CXX_TEST_INCLUDE_DIR ${CXX_INCLUDE_DIR})
 
 add_executable(AllTests ${CXX_TEST_SOURCES})
+target_link_libraries(AllTests ${TARGET_NAME})
 target_include_directories(AllTests PRIVATE ${CXX_TEST_INCLUDE_DIR})
 set_target_properties(AllTests
     PROPERTIES

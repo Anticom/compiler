@@ -24,7 +24,6 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
     - libgtest-dev
-    - cmake
     - gcovr
     - jq
 
@@ -33,10 +32,13 @@ before_install:
   - wget -O ~/codacy-coverage-reporter-assembly-latest.jar $(curl https://api.github.com/repos/codacy/codacy-coverage-reporter/releases/latest | jq -r .assets[0].browser_download_url)
 
 before_script:
-  # Build agent information
-  - uname -a
-  - gcc -v && g++ -v && cmake --version
+  # Additional build agent information
+  - cmake --version
   - gcovr --version
+  # Check google-test installation
+  - ls /usr/include/gtest
+  - ls /usr/share/doc/libgtest-dev/
+  - ls /usr/src/gtest/
 
 script:
   - mkdir build
