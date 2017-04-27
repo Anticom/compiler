@@ -50,6 +50,8 @@ before_script:
   - gcovr --version
 
 script:
+  # Change back into git working copy of project
+  - cd ~/Anticom/compiler
   - cmake -DCOVERAGE=ON -DCMAKE_BUILD_TYPE=Debug . && make && make test
   # Collect coverage
   #- gcovr src/
