@@ -51,8 +51,7 @@ set(CXX_SOURCES
 
     # DEV TOOLS
     src/TokenStreamPrinter.cxx
-    src/AstPrinter.cxx
-    )
+    src/AstPrinter.cxx)
 
 # BUILDING
 add_library(${TARGET_NAME} ${CXX_SOURCES})
@@ -64,12 +63,18 @@ set_target_properties(${TARGET_NAME}
 
 # TESTS
 set(CXX_TEST_SOURCES
-    test/testAstPrinter.cxx)
+    test/testAstPrinter.cxx
+    test/testBoundTokenDefinition.cxx
+    test/testErrorTokenDefinition.cxx
+    test/testStringTokenDefinition.cxx)
 
-set(CXX_TEST_INCLUDE_DIR ${CXX_INCLUDE_DIR})
+set(CXX_TEST_INCLUDE_DIR
+    ${CXX_INCLUDE_DIR}
+    ${GTEST_INCLUDE_DIRS})
 
 add_executable(AllTests ${CXX_TEST_SOURCES})
-target_link_libraries(AllTests ${TARGET_NAME})
+#target_link_libraries(AllTests ${TARGET_NAME} GTest::GTest GTest::Main)
+target_link_libraries(AllTests ${TARGET_NAME} ${GTEST_BOTH_LIBRARIES})
 target_include_directories(AllTests PRIVATE ${CXX_TEST_INCLUDE_DIR})
 set_target_properties(AllTests
     PROPERTIES
