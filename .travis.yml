@@ -35,6 +35,7 @@ before_install:
 
 install:
   # Install gtest from scratch so we can use it from an alternative location
+  - echo "DIRECTORY INFO" && pwd && ls -alh
   - mkdir ~/googletest
   - cd googletest_build
   - cmake -DBUILD_SHARED_LIBS=ON .
