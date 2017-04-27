@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <memory>
-#include <unordered_multimap>
+#include <unordered_map>
 
 #include "Token.hxx"
 #include "Lexer.hxx"
@@ -21,7 +21,9 @@ public:
     // --- API:
     virtual std::shared_ptr<TokenNode> execute() {
         // TODO
-        return std::shared_ptr<TokenNode>(new TokenNode("TODO"));
+        return std::shared_ptr<TokenNode>(new TokenNode(
+            std::shared_ptr<Token>(new Token("TODO", "TODO"))
+        ));
     };
 };
 
@@ -72,14 +74,14 @@ private:
 /**
  * Container used by ProductionManager
  */
-class ProductionMap : public std::unordered_multimap<std::string, ExecutionPan> {};
+class ProductionMap : public std::unordered_multimap<std::string, ExecutionPlan> {};
 
 /**
  * Central manager for production rules
  */
 class ProductionManager {
 public:
-    ProductionManager(Lexer::config_t& terminalTokens) : tokens(terminalTokens) {
+    ProductionManager(std::list<std::shared_ptr<Token>>& terminalTokens) : tokens(terminalTokens) {
         // TODO create ReachedTerminalExecutionPlan's and feed in terminals
     };
     virtual ~ProductionManager() {};
@@ -106,10 +108,11 @@ public:
         return;
     };
 private:
+    std::list<std::shared_ptr<Token>> tokens;
     ProductionMap productions;
 
     bool hasTokenType(const std::string& tokenType) {
-        for(Token t : this->tokens) {
+        for(std::shared_ptr<Token>& t : this->tokens) {
             if(t->getType().compare(tokenType) == 0) return true;
         }
 
@@ -125,9 +128,10 @@ private:
     };
 
     std::shared_ptr<Token> lookupToken(const std::string& tokenType) {
-        for(Token t : this->tokens) {
+        for(std::shared_ptr<Token>& t : this->tokens) {
             if(t->getType().compare(tokenType) == 0) return t;
         }
+        return std::shared_ptr<Token>(new Token("ERROR", "LOOKUP_ERROR"));
     };
 };
 
@@ -135,14 +139,12 @@ private:
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-ProductionRules getGoGrammar(Lexer::config_t terminalTokens) {
+ProductionRules getGoGrammar(std::list<std::shared_ptr<Token>>& terminalTokens) {
     ProductionRules grammar;
 
-    //rule("PackageClause") = "package", "PackageName";
-    
-    ProductionManager c(terminalTokens);
-    //c->def("PackageClause") /*TokenProxy*/ = "package" + "PackageName" + '.';
-    c->def("SourceFile") = "PackageClause" + ';' + { "ImportDecl" + ';' } + { "TopLevelDecl" + ';' } + '.';
+    //ProductionManager c(terminalTokens);
+    // c->def("PackageClause") /*TokenProxy*/ = "package" + "PackageName" + '.';
+    //c->def("SourceFile") = "PackageClause" + ';' + { "ImportDecl" + ';' } + { "TopLevelDecl" + ';' } + '.';
     //return c->build();
     
 
