@@ -41,6 +41,7 @@ install:
   - make
   - mv googletest/include ~/googletest/include
   - mv googlemock/gtest/libgtest* ~/googletest
+  # Cleanup build directory
   - cd ~ && rm -rf googletest_build
 
 before_script:
@@ -49,15 +50,9 @@ before_script:
   - gcovr --version
 
 script:
-  - mkdir build
-  # CMake
-  - cd build && cmake -DCOVERAGE=ON -DCMAKE_BUILD_TYPE=Debug ..
-  # Build project
-  - cd build && make
-  # Run tests
-  - cd build && make test
+  - cmake -DCOVERAGE=ON -DCMAKE_BUILD_TYPE=Debug . && make && make test
   # Collect coverage
-  #- cd build && gcovr src/
+  #- gcovr src/
 
 after_success:
   # Send coverage report to codacy
