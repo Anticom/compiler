@@ -1,6 +1,8 @@
 # compiler
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/d201a49a0f674f03b9f296aa123a6333)](https://www.codacy.com/app/Anticom/compiler?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Anticom/compiler&amp;utm_campaign=Badge_Grade)
+[![Build Status](https://travis-ci.org/Anticom/compiler.svg?branch=master)](https://travis-ci.org/Anticom/compiler) (`master`)
+[![Build Status](https://travis-ci.org/Anticom/compiler.svg?branch=develop)](https://travis-ci.org/Anticom/compiler) (`develop`)
 
 ## Project description
 Compiler framework alongside `go` compiler implementation.
@@ -8,10 +10,10 @@ Compiler framework alongside `go` compiler implementation.
 The lexer and parser toolkit itself is located inside `tpl` subdirectory.
 
 ## Build instructions
-After cloning this repository, run:
+To build the `go` compiler, after cloning this repository, run:
 ```sh
-$ cd gocompiler
-$ mkdir Release
+$ mkdir build
+$ cd build
 $ export CXX=/usr/bin/clang++ # <- optional
 $ cmake -DCMAKE_BUILD_TYPE=Release ..
 $ make

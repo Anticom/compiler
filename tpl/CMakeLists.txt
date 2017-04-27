@@ -2,8 +2,23 @@ cmake_minimum_required(VERSION 3.2)
 project(tpl)
 set(TARGET_NAME ${PROJECT_NAME})
 
-#option(BUILD_SHARED_LIBS "Build shared instead of static libs?" ON)
+enable_testing()
+find_package(GTest REQUIRED)
 
+# CONFIG
+option(BUILD_SHARED_LIBS "Build shared instead of static libs?" ON)
+
+if(COVERAGE)
+    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+        # using Clang
+        set(CXX_FLAGS "-coverage -O0")
+    elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+        # using GCC
+        set(CXX_FLAGS "-fprofile-arcs -ftest-coverage -fPIC -O0")
+    endif()
+endif()
+
+# PROJECT FILES
 set(CXX_INCLUDE_DIR
     ${PROJECT_SOURCE_DIR}/include)
 
@@ -36,18 +51,34 @@ set(CXX_SOURCES
 
     # DEV TOOLS
     src/TokenStreamPrinter.cxx
-    src/AstPrinter.cxx
+    src/AstPrinter.cxx)
 
-    # APPLICATION
-    #src/sketch.cxx
-    )
-
-#configure_file(${PROJECT_SOURCE_DIR}/hello.go ${PROJECT_BINARY_DIR}/hello.go COPYONLY)
-
-#add_executable(${TARGET_NAME} ${CXX_SOURCES})
+# BUILDING
 add_library(${TARGET_NAME} ${CXX_SOURCES})
 target_include_directories(${TARGET_NAME} PUBLIC ${CXX_INCLUDE_DIR})
 set_target_properties(${TARGET_NAME}
     PROPERTIES
         CXX_STANDARD 11
         CXX_STANDARD_REQUIRED TRUE)
+
+# TESTS
+set(CXX_TEST_SOURCES
+    test/testAstPrinter.cxx
+    test/testBoundTokenDefinition.cxx
+    test/testErrorTokenDefinition.cxx
+    test/testStringTokenDefinition.cxx)
+
+set(CXX_TEST_INCLUDE_DIR
+    ${CXX_INCLUDE_DIR}
+    ${GTEST_INCLUDE_DIRS})
+
+add_executable(AllTests ${CXX_TEST_SOURCES})
+#target_link_libraries(AllTests ${TARGET_NAME} GTest::GTest GTest::Main)
+target_link_libraries(AllTests ${TARGET_NAME} ${GTEST_BOTH_LIBRARIES})
+target_include_directories(AllTests PRIVATE ${CXX_TEST_INCLUDE_DIR})
+set_target_properties(AllTests
+    PROPERTIES
+        CXX_STANDARD 11
+        CXX_STANDARD_REQUIRED TRUE)
+
+GTEST_ADD_TESTS(AllTests "" AUTO)

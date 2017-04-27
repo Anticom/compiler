@@ -1,0 +1,63 @@
+language: cpp
+dist: trusty
+compiler:
+  - clang++
+  - g++
+os: linux
+# Enable containerization support
+sudo: false
+
+env:
+  global:
+    # CODACY_PROJECT_TOKEN
+    - secure: "addWK7CeZuhXrL19EeWIOuoKsC0nPs17TIRBu2AkfwZfdGFTBf8dGW/8KM7Vec/LhoflQr5cQX9GiIcwlxU8+mMpIFWvLjvE06dLo6yZiGTDHX7QrCYC096TRVbAEPCF88kGZ6Udw4FCvXbDNXJKgnAnSDkL/Mzb6cJ/FW1gylrtCNxKRwAy/0Ch2uR4jOKgHVZ18HdbqPBP1Awqe8whX43AKoHrQEweykMAsvhAD1M2MCoz5BwYQqI8XMmNq87ZjwVUOCY/JLfZVbfe+drMVD+7MLLLsVAytgjghG/oAGhUipIsQz+oJQR2NmPyTW5rfZq4tJgD7YaZUfuBCvMlin6AUeyyPxdkQ2UKttPOUbzH2qjltcpG96N46RRxeHR62z3eZ2aYKEXYmFulDCGHBUKyCJhYtjDVLQjMDEUXqvjuV9jqfScHPtZnYMbXrClkFtT3UsvU+1qkJ3fmrLE7jLgdgYu1bB6Gb3WGSwMmkS6M3Ayegv529wm9HF53kZ8eQb7kE5vuayJuPknED1wDsg3RfDYWw7X0Xvtd8kYXlnZ60BqdWczM/dY2h4XRD/sHiFsXsuDbXryjWMGRdtiQ39EzqUnxh0ANSjSB/XxnMzVB/QbTej5T190Pd8xKu+BDquYprQXYTf5brOU7M0FX+XQKWJCd/F8/7wW7+chWR6U="
+    # Secify semver version string to latest google release
+    - GTEST_VERSION="1.8.0"
+    # Hint CMake about local google-test location
+    - GTEST_ROOT="~/googletest"
+
+#branches:
+#  only:
+#  - master
+#  - develop
+
+addons:
+  apt:
+    packages:
+    - gcovr
+    - jq
+
+before_install:
+  # Download latest googletest
+  - wget https://github.com/google/googletest/archive/release-${GTEST_VERSION}.tar.gz && tar xf release-${GTEST_VERSION}.tar.gz && mv googletest-release-${GTEST_VERSION} googletest_build
+  # Download latest codacy-coverage-reporter
+  - wget -O ~/codacy-coverage-reporter-assembly-latest.jar $(curl https://api.github.com/repos/codacy/codacy-coverage-reporter/releases/latest | jq -r .assets[0].browser_download_url)
+
+install:
+  # Install gtest from scratch so we can use it from an alternative location
+  - mkdir ~/googletest
+  - cd googletest_build
+  - cmake -DBUILD_SHARED_LIBS=ON .
+  - make
+  - mv googletest/include ~/googletest/include
+  - mv googlemock/gtest/libgtest* ~/googletest
+  # Cleanup build directory
+  - cd ~ && rm -rf googletest_build
+
+before_script:
+  # Additional build agent information
+  - cmake --version
+  - gcovr --version
+
+script:
+  # TODO more sane way of switching back to working copy?
+  # Change back into git working copy of project
+  - cd /home/travis/build/Anticom/compiler
+  - cmake -DCOVERAGE=ON -DCMAKE_BUILD_TYPE=Debug . && make && make test
+  # Collect coverage
+  #- gcovr src/
+
+after_success:
+  # Send coverage report to codacy
+  #- java -cp ~/codacy-coverage-reporter-assembly-latest.jar com.codacy.CodacyCoverageReporter -l Java -r build/reports/jacoco/test/jacocoTestReport.xml
+  - echo "Great Success!"
